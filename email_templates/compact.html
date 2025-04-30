@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        h1 {
+            color: #34495e;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .task-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .task-title {
+            font-weight: bold;
+            flex: 1;
+        }
+        .task-title a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+        .task-title a:hover {
+            text-decoration: underline;
+        }
+        .task-due {
+            font-size: 12px;
+            color: #e74c3c;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        .task-description {
+            font-size: 14px;
+            color: #555;
+            padding-left: 5px;
+            margin-top: 5px;
+            border-left: 2px solid #eee;
+        }
+        /* Styling for description content */
+        .task-description ul, .task-description ol {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+        .task-description li {
+            margin-bottom: 4px;
+        }
+        .task-description p {
+            margin: 8px 0;
+        }
+        /* Styling for transformed checkbox lists */
+        .task-description .checkbox-list {
+            list-style-type: circle;
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+        .task-description .checkbox-item {
+            margin-bottom: 6px;
+        }
+        .task-description .checkbox-true {
+            color: #95a5a6;
+        }
+        /* Remove old task list styles that are no longer needed */
+            margin-top: 4px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #95a5a6;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    
+    {% if tasks %}
+        <p>You have {{ tasks|length }} task{% if tasks|length != 1 %}s{% endif %} {{ context }}.</p>
+        
+        <ul class="task-list">
+        {% for task in tasks %}
+            <li class="task-item">
+                <div class="task-header">
+                    <span class="task-title"><a href="{{ task.url }}">{{ task.title }}</a></span>
+                    <span class="task-due">{{ task.due_date }}</span>
+                </div>
+                <div class="task-description">{{ task.description }}</div>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no tasks {{ context }}.</p>
+    {% endif %}
+    
+    <div class="footer">
+        Generated on {{ generation_time }} | Vikunja Task Manager
+    </div>
+</body>
+</html> 

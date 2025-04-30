@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .task {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .task-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .task-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .task-due {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .task-description {
+            margin-top: 10px;
+            color: #555;
+        }
+        /* Styling for description content */
+        .task-description ul, .task-description ol {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+        .task-description li {
+            margin-bottom: 4px;
+        }
+        .task-description p {
+            margin: 8px 0;
+        }
+        /* Styling for transformed checkbox lists */
+        .task-description .checkbox-list {
+            list-style-type: circle;
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+        .task-description .checkbox-item {
+            margin-bottom: 6px;
+        }
+        .task-description .checkbox-true {
+            color: #95a5a6;
+        }
+        .task-description input[type="checkbox"] {
+            margin-right: 8px;
+            margin-top: 4px;
+        }
+        .summary {
+            margin-top: 30px;
+            font-style: italic;
+            color: #7f8c8d;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .header {
+            color: #000;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        .no-tasks {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #95a5a6;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ title }}</h1>
+    </div>
+    
+    {% if tasks %}
+        <p>You have {{ tasks|length }} task{% if tasks|length != 1 %}s{% endif %} {{ context }}:</p>
+        
+        {% for task in tasks %}
+        <div class="task">
+            <div class="task-title">
+                <a href="{{ task.url }}">{{ task.title }}</a>
+            </div>
+            <div class="task-due">Due: {{ task.due_date }}</div>
+            <div class="task-description">{{ task.description }}</div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-tasks">
+            <p>You have no tasks {{ context }}.</p>
+        </div>
+    {% endif %}
+    
+    <div class="summary">
+        This email was generated on {{ generation_time }} from your Vikunja instance.
+    </div>
+    
+    <div class="footer">
+        &copy; {{ generation_time.split(" ")[0].split("-")[0] }} Vikunja Task Manager
+    </div>
+</body>
+</html> 
