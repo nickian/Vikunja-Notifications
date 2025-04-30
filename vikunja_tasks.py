@@ -391,7 +391,7 @@ def main():
     # Handle upcoming tasks check
     if args.upcoming:
         # Time thresholds to check (in minutes)
-        thresholds = [15, 30, 60]  # 15 min, 30 min, 1 hour
+        thresholds = [5, 30, 60]  # 5 min, 30 min, 1 hour
         notified_tasks = set()  # Track which tasks we've already notified about
         
         logger.info(f"Checking for tasks due soon at {get_current_time()}")
@@ -412,20 +412,21 @@ def main():
                 # Calculate remaining time and determine if we should notify
                 remaining = task["minutes_remaining"]
                 
-                # More lenient threshold check:
-                # For 15 min threshold: notify if 0-20 minutes remaining
-                # For 30 min threshold: notify if 20-40 minutes remaining
-                # For 60 min threshold: notify if 40-75 minutes remaining
+                # More precise threshold check:
+                # For 5 min threshold: notify if 2-8 minutes remaining
+                # For 30 min threshold: notify if 25-35 minutes remaining
+                # For 60 min threshold: notify if 55-65 minutes remaining
+                # (Specifically avoiding ~45 minutes)
                 should_notify = False
                 standardized_time = None
                 
-                if minutes == 15 and 0 <= remaining <= 20:
+                if minutes == 5 and 2 <= remaining <= 8:
                     should_notify = True
-                    standardized_time = "15 minutes"
-                elif minutes == 30 and 20 < remaining <= 40:
+                    standardized_time = "5 minutes"
+                elif minutes == 30 and 25 <= remaining <= 35:
                     should_notify = True
                     standardized_time = "30 minutes"
-                elif minutes == 60 and 40 < remaining <= 75:
+                elif minutes == 60 and 55 <= remaining <= 65:
                     should_notify = True
                     standardized_time = "1 hour"
                 
