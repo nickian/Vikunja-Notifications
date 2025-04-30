@@ -413,17 +413,21 @@ def main():
                 remaining = task["minutes_remaining"]
                 
                 # More lenient threshold check:
-                # For 15 min threshold: notify if 5-20 minutes remaining
+                # For 15 min threshold: notify if 0-20 minutes remaining
                 # For 30 min threshold: notify if 20-40 minutes remaining
-                # For 60 min threshold: notify if 45-75 minutes remaining
+                # For 60 min threshold: notify if 40-75 minutes remaining
                 should_notify = False
+                standardized_time = None
                 
                 if minutes == 15 and 0 <= remaining <= 20:
                     should_notify = True
+                    standardized_time = "15 minutes"
                 elif minutes == 30 and 20 < remaining <= 40:
                     should_notify = True
+                    standardized_time = "30 minutes"
                 elif minutes == 60 and 40 < remaining <= 75:
                     should_notify = True
+                    standardized_time = "1 hour"
                 
                 if not should_notify:
                     logger.debug(f"Task '{task.get('title')}' with {remaining} minutes remaining doesn't match threshold {minutes}")
@@ -432,18 +436,19 @@ def main():
                 # Add to notified set to prevent duplicates
                 notified_tasks.add(task_id)
                 
-                time_str = format_time_remaining(remaining)
-                task_title = task.get("title", "Untitled")
+                # Use standardized time for notifications, but log actual time
+                actual_time_str = format_time_remaining(remaining)
+                logger.info(f"Task '{task.get('title')}' is actually due in {actual_time_str}, showing as {standardized_time}")
                 
-                logger.info(f"Task '{task_title}' is due in {time_str}")
+                task_title = task.get("title", "Untitled")
                 
                 # Send email notification if requested
                 if args.email:
-                    subject = f"Task due in {time_str}: {task_title}"
+                    subject = f"Task due in {standardized_time}: {task_title}"
                     # Format a single task for the email
                     html = email_utils.prepare_email_content(
                         [task],  # Send just this one task
-                        f"DUE IN {time_str.upper()}",
+                        f"DUE IN {standardized_time.upper()}",
                         VIKUNJA_BASE_URL,
                         get_current_time(),
                         args.template
@@ -456,7 +461,7 @@ def main():
                     task_list = [task]
                     mattermost_utils.send_webhook_notification(
                         task_list,
-                        f"DUE IN {time_str.upper()}",
+                        f"DUE IN {standardized_time.upper()}",
                         VIKUNJA_BASE_URL,
                         args.webhook_url,
                         args.webhook_username,
