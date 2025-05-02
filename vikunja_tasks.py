@@ -391,7 +391,7 @@ def main():
     # Handle upcoming tasks check
     if args.upcoming:
         # Time thresholds to check (in minutes)
-        thresholds = [5, 30, 60]  # 5 min, 30 min, 1 hour
+        thresholds = [0, 5, 15, 30, 60]  # 0 = due now, 5 min, 15 min, 30 min, 1 hour
         notified_tasks = set()  # Track which tasks we've already notified about
         
         logger.info(f"Checking for tasks due soon at {get_current_time()}")
@@ -413,16 +413,24 @@ def main():
                 remaining = task["minutes_remaining"]
                 
                 # More precise threshold check:
-                # For 5 min threshold: notify if 2-8 minutes remaining
+                # For due now: notify if -2 to 2 minutes from due time
+                # For 5 min threshold: notify if 3-8 minutes remaining
+                # For 15 min threshold: notify if 12-18 minutes remaining
                 # For 30 min threshold: notify if 25-35 minutes remaining
                 # For 60 min threshold: notify if 55-65 minutes remaining
                 # (Specifically avoiding ~45 minutes)
                 should_notify = False
                 standardized_time = None
                 
-                if minutes == 5 and 2 <= remaining <= 8:
+                if minutes == 0 and -2 <= remaining <= 2:
+                    should_notify = True
+                    standardized_time = "now"
+                elif minutes == 5 and 3 <= remaining <= 8:
                     should_notify = True
                     standardized_time = "5 minutes"
+                elif minutes == 15 and 12 <= remaining <= 18:
+                    should_notify = True
+                    standardized_time = "15 minutes"
                 elif minutes == 30 and 25 <= remaining <= 35:
                     should_notify = True
                     standardized_time = "30 minutes"
@@ -443,13 +451,23 @@ def main():
                 
                 task_title = task.get("title", "Untitled")
                 
+                # Special subject and header for "due now" tasks
+                subject = ""
+                header = ""
+                
+                if standardized_time == "now":
+                    subject = f"Task due now: {task_title}"
+                    header = "DUE NOW"
+                else:
+                    subject = f"Task due in {standardized_time}: {task_title}"
+                    header = f"DUE IN {standardized_time.upper()}"
+                
                 # Send email notification if requested
                 if args.email:
-                    subject = f"Task due in {standardized_time}: {task_title}"
                     # Format a single task for the email
                     html = email_utils.prepare_email_content(
                         [task],  # Send just this one task
-                        f"DUE IN {standardized_time.upper()}",
+                        header,
                         VIKUNJA_BASE_URL,
                         get_current_time(),
                         args.template
@@ -462,7 +480,7 @@ def main():
                     task_list = [task]
                     mattermost_utils.send_webhook_notification(
                         task_list,
-                        f"DUE IN {standardized_time.upper()}",
+                        header,
                         VIKUNJA_BASE_URL,
                         args.webhook_url,
                         args.webhook_username,
