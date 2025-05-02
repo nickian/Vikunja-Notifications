@@ -476,8 +476,8 @@ def main():
     if not any([args.today, args.overdue, args.this_week, args.next_week]) or args.all:
         display_tasks(tasks_with_due_dates, "ALL PENDING")
         
-        # Send email if requested
-        if args.email or args.save_preview:
+        # Send email if requested and tasks were found
+        if (args.email or args.save_preview) and tasks_with_due_dates:
             html = email_utils.prepare_email_content(
                 sort_tasks_by_due_date(tasks_with_due_dates), 
                 "ALL PENDING",
@@ -487,8 +487,8 @@ def main():
             )
             email_utils.send_email(args.email, html, args.subject, args)
             
-        # Send Mattermost notification if requested
-        if args.mattermost and validate_mattermost_config(args):
+        # Send Mattermost notification if requested and tasks were found
+        if args.mattermost and validate_mattermost_config(args) and tasks_with_due_dates:
             mattermost_utils.send_webhook_notification(
                 sort_tasks_by_due_date(tasks_with_due_dates),
                 "ALL PENDING",
@@ -505,8 +505,8 @@ def main():
         due_today = get_due_today_tasks(tasks_with_due_dates)
         display_tasks(due_today, "DUE TODAY")
         
-        # Send email if requested
-        if args.email or args.save_preview:
+        # Send email if requested and tasks were found
+        if (args.email or args.save_preview) and due_today:
             html = email_utils.prepare_email_content(
                 sort_tasks_by_due_date(due_today), 
                 "DUE TODAY",
@@ -516,8 +516,8 @@ def main():
             )
             email_utils.send_email(args.email, html, args.subject, args)
             
-        # Send Mattermost notification if requested
-        if args.mattermost and validate_mattermost_config(args):
+        # Send Mattermost notification if requested and tasks were found
+        if args.mattermost and validate_mattermost_config(args) and due_today:
             mattermost_utils.send_webhook_notification(
                 sort_tasks_by_due_date(due_today),
                 "DUE TODAY",
@@ -531,8 +531,8 @@ def main():
         overdue = get_overdue_tasks(tasks_with_due_dates)
         display_tasks(overdue, "OVERDUE")
         
-        # Send email if requested
-        if args.email or args.save_preview:
+        # Send email if requested and tasks were found
+        if (args.email or args.save_preview) and overdue:
             html = email_utils.prepare_email_content(
                 sort_tasks_by_due_date(overdue), 
                 "OVERDUE",
@@ -542,8 +542,8 @@ def main():
             )
             email_utils.send_email(args.email, html, args.subject, args)
             
-        # Send Mattermost notification if requested
-        if args.mattermost and validate_mattermost_config(args):
+        # Send Mattermost notification if requested and tasks were found
+        if args.mattermost and validate_mattermost_config(args) and overdue:
             mattermost_utils.send_webhook_notification(
                 sort_tasks_by_due_date(overdue),
                 "OVERDUE",
@@ -557,8 +557,8 @@ def main():
         due_this_week = get_due_this_week_tasks(tasks_with_due_dates)
         display_tasks(due_this_week, "DUE THIS WEEK")
         
-        # Send email if requested
-        if args.email or args.save_preview:
+        # Send email if requested and tasks were found
+        if (args.email or args.save_preview) and due_this_week:
             html = email_utils.prepare_email_content(
                 sort_tasks_by_due_date(due_this_week), 
                 "DUE THIS WEEK",
@@ -568,8 +568,8 @@ def main():
             )
             email_utils.send_email(args.email, html, args.subject, args)
             
-        # Send Mattermost notification if requested
-        if args.mattermost and validate_mattermost_config(args):
+        # Send Mattermost notification if requested and tasks were found
+        if args.mattermost and validate_mattermost_config(args) and due_this_week:
             mattermost_utils.send_webhook_notification(
                 sort_tasks_by_due_date(due_this_week),
                 "DUE THIS WEEK",
@@ -583,8 +583,8 @@ def main():
         due_next_week = get_due_next_week_tasks(tasks_with_due_dates)
         display_tasks(due_next_week, "DUE NEXT WEEK")
         
-        # Send email if requested
-        if args.email or args.save_preview:
+        # Send email if requested and tasks were found
+        if (args.email or args.save_preview) and due_next_week:
             html = email_utils.prepare_email_content(
                 sort_tasks_by_due_date(due_next_week), 
                 "DUE NEXT WEEK",
@@ -594,8 +594,8 @@ def main():
             )
             email_utils.send_email(args.email, html, args.subject, args)
             
-        # Send Mattermost notification if requested
-        if args.mattermost and validate_mattermost_config(args):
+        # Send Mattermost notification if requested and tasks were found
+        if args.mattermost and validate_mattermost_config(args) and due_next_week:
             mattermost_utils.send_webhook_notification(
                 sort_tasks_by_due_date(due_next_week),
                 "DUE NEXT WEEK",
