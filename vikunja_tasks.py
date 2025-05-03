@@ -311,14 +311,15 @@ def get_tasks_due_soon(tasks, minutes):
         # Log each task we're evaluating for debugging
         logger.debug(f"Evaluating task '{task.get('title')}' due at {due_time}")
         
-        # Skip tasks that are already overdue
-        if due_time < now:
+        # Skip tasks that are already overdue, EXCEPT when checking for "due now" tasks (minutes=0)
+        if due_time < now and minutes > 0:
             logger.debug(f"  - Skipping task as it's already overdue")
             continue
             
-        # Include tasks due within the time window
-        if due_time <= soon:
-            # Calculate time remaining
+        # For "due now" (minutes=0), include tasks that are slightly overdue
+        # For other thresholds, only include tasks due within the time window
+        if (minutes == 0 and now - timedelta(minutes=2) <= due_time <= soon) or (minutes > 0 and due_time <= soon):
+            # Calculate time remaining (can be negative for overdue tasks)
             time_diff = due_time - now
             minutes_remaining = int(time_diff.total_seconds() / 60)
             task["minutes_remaining"] = minutes_remaining
