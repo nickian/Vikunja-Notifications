@@ -66,7 +66,15 @@ This will send notifications for upcoming tasks using the following time windows
 - **30-minute notification**: Tasks due in 20-40 minutes 
 - **60-minute notification**: Tasks due in 40-75 minutes
 
-Each task gets its own individual notification with:
+### Notification Label Requirement
+
+**Important**: Notifications will only be sent for tasks that have a label titled "Notify" (case-insensitive). To receive notifications for a task:
+
+1. Add a label titled "Notify" to the task in Vikunja
+2. This feature allows you to control which tasks trigger notifications
+3. Tasks without this label will be processed but won't send notifications
+
+Each task with the "Notify" label gets its own individual notification with:
 - Time remaining in human-readable format (e.g., "15 minutes", "1 hour")
 - A direct link to the task
 - Customized subject line with the time remaining

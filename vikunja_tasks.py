@@ -349,6 +349,17 @@ def format_time_remaining(minutes):
         else:
             return f"{hours} hours and {mins} minutes"
 
+def has_notify_label(task):
+    """Check if the task has a 'Notify' label (case-insensitive)"""
+    if "labels" not in task or not task["labels"]:
+        return False
+    
+    for label in task["labels"]:
+        if "title" in label and label["title"].lower() == "notify":
+            return True
+    
+    return False
+
 def main():
     # Parse args first
     args = parse_arguments()
@@ -408,6 +419,11 @@ def main():
                 # If we've already notified about this task in a smaller threshold, skip it
                 if task_id in notified_tasks:
                     logger.debug(f"Already notified about task {task_id}, skipping")
+                    continue
+                
+                # Skip tasks without the "Notify" label
+                if not has_notify_label(task):
+                    logger.debug(f"Task '{task.get('title')}' doesn't have the 'Notify' label, skipping notification")
                     continue
                 
                 # Calculate remaining time and determine if we should notify
